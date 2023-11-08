@@ -20,3 +20,36 @@ Parameters:
     Default: 10.0.1.0/24
 
 Resources:
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock:
+        Ref: VPCCIDR
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: myVPC
+
+  myPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: 
+        Ref: PublicSubnetCIDR
+      AvailabilityZone: "us-east-1a"
+      Tags:
+      - Key: Name
+        Value: myPublicSubnet
+
+  myPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: 
+        Ref: PrivateSubnetCIDR
+      AvailabilityZone: "us-east-1a"
+      Tags:
+      - Key: Name
+        Value: myPrivateSubnet
