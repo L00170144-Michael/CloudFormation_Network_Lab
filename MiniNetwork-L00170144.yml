@@ -4,27 +4,27 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: The CloudFormation Network Lab
 
 Parameters:
-  VPC_CIDR:
+  VPCCIDR:
     Description: VPC CIDR.
     Type: String
     Default: 10.0.0.0/16
 
-  publicSubnetOne_CIDR:
+  publicSubnetOneCIDR:
     Description: Public subnet CIDR.
     Type: String
     Default: 10.0.0.0/24
 
-  privateSubnetOne_CIDR:
+  privateSubnetOneCIDR:
     Description: Private subnet CIDR.
     Type: String
     Default: 10.0.1.0/24
 
-  publicSubnetTwo_CIDR:
+  publicSubnetTwoCIDR:
     Description: Public subnet CIDR.
     Type: String
     Default: 10.0.2.0/24
 
-  privateSubnetTwo_CIDR:
+  privateSubnetTwoCIDR:
     Description: Private subnet CIDR.
     Type: String
     Default: 10.0.3.0/24
@@ -35,7 +35,7 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock:
-        Ref: VPC_CIDR
+        Ref: VPCCIDR
       EnableDnsSupport: true
       Tags:
         - Key: Name
@@ -48,7 +48,7 @@ Resources:
       VpcId:
         Ref: myVPC
       CidrBlock: 
-        Ref: PublicSubnetOne_CIDR
+        Ref: publicSubnetOneCIDR
       AvailabilityZone: "us-east-1a"
       Tags:
       - Key: Name
@@ -60,7 +60,7 @@ Resources:
       VpcId:
         Ref: myVPC
       CidrBlock: 
-        Ref: PrivateSubnetOne_CIDR
+        Ref: privateSubnetOneCIDR
       AvailabilityZone: "us-east-1a"
       Tags:
       - Key: Name
@@ -72,7 +72,7 @@ Resources:
       VpcId:
         Ref: myVPC
       CidrBlock: 
-        Ref: PublicSubnetTwo_CIDR
+        Ref: publicSubnetTwoCIDR
       AvailabilityZone: "us-east-1b"
       Tags:
       - Key: Name
@@ -84,7 +84,7 @@ Resources:
       VpcId:
         Ref: myVPC
       CidrBlock: 
-        Ref: PrivateSubnetTwo_CIDR
+        Ref: privateSubnetTwoCIDR
       AvailabilityZone: "us-east-1b"
       Tags:
       - Key: Name
