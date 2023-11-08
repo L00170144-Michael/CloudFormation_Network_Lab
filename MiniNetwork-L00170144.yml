@@ -1,0 +1,8 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+#Update Later
+Description: The CloudFormation Network Lab
+
+Parameters:
+
+Resources:
