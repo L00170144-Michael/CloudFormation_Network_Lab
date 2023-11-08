@@ -4,5 +4,19 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: The CloudFormation Network Lab
 
 Parameters:
+  VPCCIDR:
+    Description: VPC CIDR.
+    Type: String
+    Default: 10.0.0.0/16
+
+  PublicSubnetCIDR:
+    Description: Public subnet CIDR.
+    Type: String
+    Default: 10.0.0.0/24
+
+  PrivateSubnetCIDR:
+    Description: Private subnet CIDR.
+    Type: String
+    Default: 10.0.1.0/24
 
 Resources:
