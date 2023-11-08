@@ -4,56 +4,91 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: The CloudFormation Network Lab
 
 Parameters:
-  VPCCIDR:
+  VPC_CIDR:
     Description: VPC CIDR.
     Type: String
     Default: 10.0.0.0/16
 
-  PublicSubnetCIDR:
+  publicSubnetOne_CIDR:
     Description: Public subnet CIDR.
     Type: String
     Default: 10.0.0.0/24
 
-  PrivateSubnetCIDR:
+  privateSubnetOne_CIDR:
     Description: Private subnet CIDR.
     Type: String
     Default: 10.0.1.0/24
 
+  publicSubnetTwo_CIDR:
+    Description: Public subnet CIDR.
+    Type: String
+    Default: 10.0.2.0/24
+
+  privateSubnetTwo_CIDR:
+    Description: Private subnet CIDR.
+    Type: String
+    Default: 10.0.3.0/24
+
 Resources:
-#
+#VPC
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock:
-        Ref: VPCCIDR
+        Ref: VPC_CIDR
       EnableDnsSupport: true
       Tags:
         - Key: Name
           Value: myVPC
 
-  myPublicSubnet:
+#SUBNETS
+  myPublicSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId:
         Ref: myVPC
       CidrBlock: 
-        Ref: PublicSubnetCIDR
+        Ref: PublicSubnetOne_CIDR
       AvailabilityZone: "us-east-1a"
       Tags:
       - Key: Name
-        Value: myPublicSubnet
+        Value: myPublicSubnetOne
 
-  myPrivateSubnet:
+  myPrivateSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId:
         Ref: myVPC
       CidrBlock: 
-        Ref: PrivateSubnetCIDR
+        Ref: PrivateSubnetOne_CIDR
       AvailabilityZone: "us-east-1a"
       Tags:
       - Key: Name
-        Value: myPrivateSubnet
+        Value: myPrivateSubnetOne
+
+  myPublicSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: 
+        Ref: PublicSubnetTwo_CIDR
+      AvailabilityZone: "us-east-1b"
+      Tags:
+      - Key: Name
+        Value: myPublicSubnetTwo
+
+  myPrivateSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: 
+        Ref: PrivateSubnetTwo_CIDR
+      AvailabilityZone: "us-east-1b"
+      Tags:
+      - Key: Name
+        Value: myPrivateSubnetTwo
 
 #Create VPC
 #Add Subnets
