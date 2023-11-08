@@ -20,6 +20,7 @@ Parameters:
     Default: 10.0.1.0/24
 
 Resources:
+#
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -53,3 +54,12 @@ Resources:
       Tags:
       - Key: Name
         Value: myPrivateSubnet
+
+#Create VPC
+#Add Subnets
+#Add availability Zones
+#Add an internet Gateway to the VPC
+#Router tables for public and private
+#Declare deicated route table for the VPC
+
+
