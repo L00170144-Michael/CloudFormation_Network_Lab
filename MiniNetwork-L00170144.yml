@@ -90,6 +90,14 @@ Resources:
       - Key: Name
         Value: myPrivateSubnetTwo
 
+#INTERNETGATEWAY
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: MyInternetGateway
+
 #Create VPC
 #Add Subnets
 #Add availability Zones
