@@ -91,12 +91,21 @@ Resources:
         Value: myPrivateSubnetTwo
 
 #INTERNETGATEWAY
-  MyInternetGateway:
+  myInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
       - Key: Name
         Value: MyInternetGateway
+
+  AttachMyInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: myVPC
+      InternetGatewayId:
+        Ref: myInternetGateway
+
 
 #Create VPC
 #Add Subnets
