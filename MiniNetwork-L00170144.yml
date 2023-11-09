@@ -136,6 +136,7 @@ Resources:
     Properties:
       KeyName: myKeyPair
 
+#INSTANCE
   MyEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -145,8 +146,9 @@ Resources:
       SubnetId:
         Ref: myPublicSubnetOne
       SecurityGroupIds:
-        Ref: mySecurityGroup
+        - Ref: mySecurityGroup
 
+#SECURITYGROUP
   mySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
