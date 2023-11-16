@@ -49,7 +49,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: publicSubnetOneCIDR
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: "us-west-2a"
       Tags:
       - Key: Name
         Value: myPublicSubnetOne
@@ -61,7 +61,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: privateSubnetOneCIDR
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: "us-west-2a"
       Tags:
       - Key: Name
         Value: myPrivateSubnetOne
@@ -73,7 +73,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: publicSubnetTwoCIDR
-      AvailabilityZone: "us-east-1b"
+      AvailabilityZone: "us-west-2b"
       Tags:
       - Key: Name
         Value: myPublicSubnetTwo
@@ -85,7 +85,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: privateSubnetTwoCIDR
-      AvailabilityZone: "us-east-1b"
+      AvailabilityZone: "us-west-2b"
       Tags:
       - Key: Name
         Value: myPrivateSubnetTwo
@@ -137,16 +137,22 @@ Resources:
       KeyName: myKeyPair
 
 #INSTANCE
-  MyEC2Instance:
+  myEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0d5eff06f840b45e9 
+      ImageId: ami-08d70e59c07c61a3a 
       InstanceType: t2.micro
       KeyName: myKeyPair
       SubnetId:
         Ref: myPublicSubnetOne
       SecurityGroupIds:
         - Ref: mySecurityGroup
+
+  myEIP:
+    Type: AWS::EC2::EIP  # Allocate an Elastic IP address
+    Properties:
+      InstanceId: 
+        Ref: myEC2Instance
 
 #SECURITYGROUP
   mySecurityGroup:
