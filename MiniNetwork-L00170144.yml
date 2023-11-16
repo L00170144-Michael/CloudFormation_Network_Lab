@@ -136,6 +136,29 @@ Resources:
     Properties:
       KeyName: myKeyPair
 
+#----------------------------------#
+#ROUTETABLE
+  myPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: myVPC
+
+#PUBLICROUTETABLE
+  myPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+       RouteTableId:
+         Ref: myPrivateRouteTable
+
+  myPrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: myPrivateSubnetOne
+      RouteTableId:
+        Ref: myPrivateRouteTable
+
 #INSTANCE
   myEC2Instance:
     Type: AWS::EC2::Instance
