@@ -28,6 +28,11 @@ Parameters:
     Description: Private subnet CIDR.
     Type: String
     Default: 10.0.3.0/24
+  
+  myKeyPair:
+    Description: myKeyPair
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must be a name key pair
 #----------------------------------------------------
 Resources:
 #VPC
@@ -132,10 +137,10 @@ Resources:
       RouteTableId:
         Ref: myRouteTable
 #----------------------------------------------------
-  newKeyPair:
-    Type: 'AWS::EC2::KeyPair'
-    Properties:
-      KeyName: myKeyPair
+ # newKeyPair:
+  #  Type: 'AWS::EC2::KeyPair'
+   # Properties:
+    #  KeyName: !Ref KeyName
 
 #----------------------------------------------------
 #NatGateway
@@ -188,7 +193,8 @@ Resources:
     Properties:
       ImageId: ami-0d5eff06f840b45e9  
       InstanceType: t2.micro
-      KeyName: myKeyPair
+      KeyName:
+        Ref: myKeyPair
       SubnetId:
         Ref: myPublicSubnetOne
       SecurityGroupIds:
@@ -214,3 +220,27 @@ Resources:
           CidrIp: 0.0.0.0/0
 
 #----------------------------------------------------
+  myEC2PrivateInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0d5eff06f840b45e9  
+      InstanceType: t2.micro
+      KeyName: 
+        Ref: myKeyPair
+      SubnetId:
+        Ref: myPrivateSubnetOne
+      SecurityGroupIds:
+        - Ref: myPrivateSecurityGroup
+
+  myPrivateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG to test ping
+      VpcId: 
+        Ref: myVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref publicSubnetOneCIDR
+  
