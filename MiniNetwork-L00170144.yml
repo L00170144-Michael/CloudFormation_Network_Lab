@@ -51,8 +51,8 @@ Resources:
         Ref: publicSubnetOneCIDR
       AvailabilityZone: "us-west-2a"
       Tags:
-      - Key: Name
-        Value: myPublicSubnetOne
+        - Key: Name
+          Value: myPublicSubnetOne
 
   myPrivateSubnetOne:
     Type: AWS::EC2::Subnet
@@ -63,8 +63,8 @@ Resources:
         Ref: privateSubnetOneCIDR
       AvailabilityZone: "us-west-2a"
       Tags:
-      - Key: Name
-        Value: myPrivateSubnetOne
+        - Key: Name
+          Value: myPrivateSubnetOne
 
   myPublicSubnetTwo:
     Type: AWS::EC2::Subnet
@@ -75,8 +75,8 @@ Resources:
         Ref: publicSubnetTwoCIDR
       AvailabilityZone: "us-west-2b"
       Tags:
-      - Key: Name
-        Value: myPublicSubnetTwo
+        - Key: Name
+          Value: myPublicSubnetTwo
 
   myPrivateSubnetTwo:
     Type: AWS::EC2::Subnet
@@ -116,12 +116,13 @@ Resources:
 #PUBLICROUTETABLE
   myPublicRoute:
     Type: AWS::EC2::Route
+    DependsOn: AttachMyInternetGateway
     Properties:
        RouteTableId:
-         Ref: myRouteTable
+        Ref: myRouteTable
        DestinationCidrBlock: 0.0.0.0/0
        GatewayId:
-         Ref: myInternetGateway
+        Ref: myInternetGateway
 
   myPublicSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -137,19 +138,40 @@ Resources:
       KeyName: myKeyPair
 
 #----------------------------------#
-#ROUTETABLE
+
+
+#NatGateway
+
+  NATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+        AllocationId: !GetAtt NATGatewayEIP.AllocationId
+        SubnetId: !Ref myPublicSubnetOne
+        Tags:
+        - Key: stack
+          Value: production
+  NATGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+        Domain: myVPC
+  RouteNATGateway:
+    DependsOn: NATGateway
+    Type: AWS::EC2::Route
+    Properties:
+        RouteTableId: !Ref myPrivateRouteTable
+        DestinationCidrBlock: '0.0.0.0/0'
+        NatGatewayId: !Ref NATGateway
+  
+  
+
+
+
+#PrivateROUTETABLE
   myPrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:  
         Ref: myVPC
-
-#PUBLICROUTETABLE
-  myPrivateRoute:
-    Type: AWS::EC2::Route
-    Properties:
-       RouteTableId:
-         Ref: myPrivateRouteTable
 
   myPrivateSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -158,6 +180,15 @@ Resources:
         Ref: myPrivateSubnetOne
       RouteTableId:
         Ref: myPrivateRouteTable
+
+  myPrivateSubnetTwoRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: myPrivateSubnetTwo
+      RouteTableId:
+        Ref: myPrivateRouteTable
+    
 
 #INSTANCE
   myEC2Instance:
