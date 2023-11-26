@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  ExportVPCStackName:
+    Description: Add the VPC name here
+    Type: String
+
+  DBInstanceIdentifier:
+    Default: mysqldb
+    Description: Instance identifier name.
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+
+  DBName:
+    Default: applicationdb
+    Description: MySQL database name
+    Type: String
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+
+  DBUser:
+    Default: admin
+    Description: admin Username
+    Type: String
+    MinLength: 1
+    MaxLength: 16
+    NoEcho: true
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+
+  DBPassword:
+    Default: Adminpwd123
+    Description: Password for database
+    Type: String
+    MinLength: 8
+    MaxLength: 41
+    NoEcho: true
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric characters.
+
+  DBStorage:
+    Default: 20
+    Description: Size of the DB.
+    Type: Number
+    MinValue: 5
+    MaxValue: 1024
+    ConstraintDescription: Must be between 5 and 1024Gb
+    
+  DatabaseInstanceClass:
+    AllowedValues:
+      - db.t1.micro
+      - db.t2.micro
+    ConstraintDescription: Must select a Type
+    Default: db.t2.micro
+    Description: DB Type
+    Type: String
+
+  MultiAZDatabase:
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be either true or false
+    Default: false
+    Description: Creates a MultiAZDatabase
+    Type: String
