@@ -243,6 +243,18 @@ Resources:
           ToPort: 22
           CidrIp: !Ref publicSubnetOneCIDR
 
+#DBSecurity Group
+  databaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Open database for access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref mySecurityGroup
+      VpcId: !Ref myVPC
+
 
 Outputs:
   myVPC:
@@ -275,7 +287,11 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-myPrivateSubnetTwo"
 
-
+  databaseSecurityGroup:
+    Description: database Security GroupID
+    Value: !Ref databaseSecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-databaseSecurityGroup"
 
   
   
