@@ -68,3 +68,29 @@ Parameters:
     Default: false
     Description: Creates a MultiAZDatabase
     Type: String
+
+Resources: 
+  MyDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: Subnets available for the RDS DB Instance
+      SubnetIds: 
+       - Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetTwo
+       - Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetOne
+      
+  MyDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: !Ref DBStorage
+      AvailabilityZone: !Select [0, !GetAZs '' ]
+      DBInstanceClass: !Ref DatabaseInstanceClass
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      DBName: !Ref DBName
+      DBSubnetGroupName: !Ref MyDBSubnetGroup
+      Engine: MySQL
+      EngineVersion: 8.0.33
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      MultiAZ: !Ref MultiAZDatabase
+      VPCSecurityGroups: 
+       - Fn::ImportValue: !Sub ${ExportVPCStackName}-databaseSecurityGroup
