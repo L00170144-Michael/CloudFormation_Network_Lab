@@ -3,6 +3,9 @@ AWSTemplateFormatVersion: "2010-09-09"
 #Update Later
 Description: The CloudFormation Network Lab
 #----------------------------------------------------
+
+#Metadata:
+
 Parameters:
   VPCCIDR:
     Description: VPC CIDR.
@@ -30,9 +33,9 @@ Parameters:
     Default: 10.0.3.0/24
   
   myKeyPair:
-    Description: myKeyPair
+    Description: Please select a Key Pair.
     Type: AWS::EC2::KeyPair::KeyName
-    ConstraintDescription: Must be a name key pair
+    ConstraintDescription: You must select a Key Pair.
 #----------------------------------------------------
 Resources:
 #VPC
@@ -54,7 +57,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: publicSubnetOneCIDR
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: !Select [0, !GetAZs '' ]
       Tags:
         - Key: Name
           Value: myPublicSubnetOne
@@ -66,7 +69,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: privateSubnetOneCIDR
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: !Select [0, !GetAZs '' ]
       Tags:
         - Key: Name
           Value: myPrivateSubnetOne
@@ -78,7 +81,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: publicSubnetTwoCIDR
-      AvailabilityZone: "us-east-1b"
+      AvailabilityZone: !Select [1, !GetAZs '' ]
       Tags:
         - Key: Name
           Value: myPublicSubnetTwo
@@ -90,7 +93,7 @@ Resources:
         Ref: myVPC
       CidrBlock: 
         Ref: privateSubnetTwoCIDR
-      AvailabilityZone: "us-east-1b"
+      AvailabilityZone: !Select [1, !GetAZs '' ]
       Tags:
       - Key: Name
         Value: myPrivateSubnetTwo
@@ -137,10 +140,6 @@ Resources:
       RouteTableId:
         Ref: myRouteTable
 #----------------------------------------------------
- # newKeyPair:
-  #  Type: 'AWS::EC2::KeyPair'
-   # Properties:
-    #  KeyName: !Ref KeyName
 
 #----------------------------------------------------
 #NatGateway
@@ -243,4 +242,40 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: !Ref publicSubnetOneCIDR
+
+
+Outputs:
+  myVPC:
+    Description: VPC ID
+    Value: !Ref myVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-myVPC" 
+
+  myPublicSubnetOne:
+    Description: Private Subnet Two ID
+    Value: !Ref myPublicSubnetOne
+    Export:
+      Name: !Sub "${AWS::StackName}-myPublicSubnetOne"
+
+  myPublicSubnetTwo:
+    Description: Private Subnet Two ID
+    Value: !Ref myPublicSubnetOne
+    Export:
+      Name: !Sub "${AWS::StackName}-myPublicSubnetOne"
+    
+  myPrivateSubnetOne:
+    Description: Private Subnet Two ID
+    Value: !Ref myPrivateSubnetOne
+    Export:
+      Name: !Sub "${AWS::StackName}-myPrivateSubnetOne"
+
+  myPrivateSubnetTwo:
+    Description: Private Subnet Two ID
+    Value: !Ref myPrivateSubnetTwo
+    Export:
+      Name: !Sub "${AWS::StackName}-myPrivateSubnetTwo"
+
+
+
+  
   
