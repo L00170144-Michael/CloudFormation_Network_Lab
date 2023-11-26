@@ -271,9 +271,9 @@ Outputs:
 
   myPublicSubnetTwo:
     Description: Private Subnet Two ID
-    Value: !Ref myPublicSubnetOne
+    Value: !Ref myPublicSubnetTwo
     Export:
-      Name: !Sub "${AWS::StackName}-myPublicSubnetOne"
+      Name: !Sub "${AWS::StackName}-myPublicSubnetTwo"
     
   myPrivateSubnetOne:
     Description: Private Subnet Two ID
