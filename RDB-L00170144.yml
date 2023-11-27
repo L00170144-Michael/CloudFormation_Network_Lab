@@ -1,6 +1,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
+  ExportSecurityStackName:
+    Description: Add the Security name here
+    Type: String
+
   ExportVPCStackName:
     Description: Add the VPC name here
     Type: String
@@ -93,4 +97,4 @@ Resources:
       MasterUserPassword: !Ref DBPassword
       MultiAZ: !Ref MultiAZDatabase
       VPCSecurityGroups: 
-       - Fn::ImportValue: !Sub ${ExportVPCStackName}-databaseSecurityGroup
+       - Fn::ImportValue: !Sub ${ExportSecurityStackName}-databaseSecurityGroup
