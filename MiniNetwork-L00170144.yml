@@ -3,8 +3,28 @@ AWSTemplateFormatVersion: "2010-09-09"
 #Update Later
 Description: The CloudFormation Network Lab
 #----------------------------------------------------
-
-#Metadata:
+#Group the parameters together
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "VPC CIDR"
+        Parameters:
+          - VPCCIDR
+      -
+        Label:
+          default: "Subnet CIDR"
+        Parameters:
+          - publicSubnetOneCIDR
+          - privateSubnetOneCIDR
+          - publicSubnetTwoCIDR
+          - privateSubnetTwoCIDR
+      -
+        Label:
+          default: "KEY PAIR"
+        Parameters:
+          - myKeyPair
 
 Parameters:
   VPCCIDR:
