@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+
+Parameters:
+  ExportVPCStackName:
+    Description: Add the VPC name here
+    Type: String
+
+Resources:
+#SECURITYGROUP
+  mySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG to test ping
+      VpcId: 
+        Fn::ImportValue: 
+          !Sub ${ExportVPCStackName}-myVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  myPrivateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG to test ping
+      VpcId: 
+        Fn::ImportValue: 
+          !Sub ${ExportVPCStackName}-myVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 10.0.0.0/24
+        #  CidrIp: !Ref publicSubnetOneCIDR
+
+#DBSecurity Group
+  databaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Open database for access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref mySecurityGroup
+      VpcId: 
+        Fn::ImportValue: 
+          !Sub ${ExportVPCStackName}-myVPC
+
+Outputs:
+  mySecurityGroup:
+    Description: my Security Group
+    Value: !Ref mySecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-mySecurityGroup" 
+
+  myPrivateSecurityGroup:
+    Description: my Security Group
+    Value: !Ref myPrivateSecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-myPrivateSecurityGroup" 
+
+  databaseSecurityGroup:
+    Description: my Security Group
+    Value: !Ref databaseSecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-databaseSecurityGroup" 
