@@ -20,11 +20,11 @@ Metadata:
           - privateSubnetOneCIDR
           - publicSubnetTwoCIDR
           - privateSubnetTwoCIDR
-      -
-        Label:
-          default: "KEY PAIR"
-        Parameters:
-          - myKeyPair
+ #     -
+  #      Label:
+   #       default: "KEY PAIR"
+    #    Parameters:
+     #     - myKeyPair
 
 Parameters:
   VPCCIDR:
@@ -52,10 +52,7 @@ Parameters:
     Type: String
     Default: 10.0.3.0/24
   
-  myKeyPair:
-    Description: Please select a Key Pair.
-    Type: AWS::EC2::KeyPair::KeyName
-    ConstraintDescription: You must select a Key Pair.
+
 #----------------------------------------------------
 Resources:
 #VPC
@@ -207,73 +204,53 @@ Resources:
         Ref: myPrivateRouteTable  
 #----------------------------------------------------
 #INSTANCE
-  myEC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-0d5eff06f840b45e9  
-      InstanceType: t2.micro
-      KeyName:
-        Ref: myKeyPair
-      SubnetId:
-        Ref: myPublicSubnetOne
-      SecurityGroupIds:
-        - Ref: mySecurityGroup
 
-  myEIP:
-    Type: AWS::EC2::EIP  # Allocate an Elastic IP address
-    Properties:
-      InstanceId: 
-        Ref: myEC2Instance
+
+ # myEIP:
+ #   Type: AWS::EC2::EIP  # Allocate an Elastic IP address
+ #   Properties:
+  #    InstanceId: 
+   #     Ref: myEC2Instance
 #----------------------------------------------------
 #SECURITYGROUP
-  mySecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: SG to test ping
-      VpcId: 
-        Ref: myVPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
+#  mySecurityGroup:
+#    Type: AWS::EC2::SecurityGroup
+#    Properties:
+#      GroupDescription: SG to test ping
+#      VpcId: 
+#        Ref: myVPC
+#      SecurityGroupIngress:
+#        - IpProtocol: tcp
+#          FromPort: 22
+#          ToPort: 22
+#          CidrIp: 0.0.0.0/0
 
 #----------------------------------------------------
-  myEC2PrivateInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: ami-0d5eff06f840b45e9  
-      InstanceType: t2.micro
-      KeyName: 
-        Ref: myKeyPair
-      SubnetId:
-        Ref: myPrivateSubnetOne
-      SecurityGroupIds:
-        - Ref: myPrivateSecurityGroup
+ 
 
-  myPrivateSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: SG to test ping
-      VpcId: 
-        Ref: myVPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: !Ref publicSubnetOneCIDR
+#  myPrivateSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup
+#    Properties:
+#      GroupDescription: SG to test ping
+#      VpcId: 
+#        Ref: myVPC
+#      SecurityGroupIngress:
+#        - IpProtocol: tcp
+#          FromPort: 22
+#          ToPort: 22
+#          CidrIp: !Ref publicSubnetOneCIDR
 
 #DBSecurity Group
-  databaseSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Open database for access
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          SourceSecurityGroupId: !Ref mySecurityGroup
-      VpcId: !Ref myVPC
+#  databaseSecurityGroup:
+#    Type: AWS::EC2::SecurityGroup
+#    Properties:
+#      GroupDescription: Open database for access
+#      SecurityGroupIngress:
+#        - IpProtocol: tcp
+#          FromPort: 3306
+#          ToPort: 3306
+#          SourceSecurityGroupId: !Ref mySecurityGroup
+#      VpcId: !Ref myVPC
 
 
 Outputs:
@@ -307,11 +284,11 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-myPrivateSubnetTwo"
 
-  databaseSecurityGroup:
-    Description: database Security GroupID
-    Value: !Ref databaseSecurityGroup
-    Export:
-      Name: !Sub "${AWS::StackName}-databaseSecurityGroup"
+#  databaseSecurityGroup:
+#    Description: database Security GroupID
+#    Value: !Ref databaseSecurityGroup
+#    Export:
+#      Name: !Sub "${AWS::StackName}-databaseSecurityGroup"
 
   
   
