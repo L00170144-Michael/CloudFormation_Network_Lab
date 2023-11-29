@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 #Update Later
-Description: The CloudFormation Network Lab
+Description: The CloudFormation mini Network Lab
 #----------------------------------------------------
 #Group the parameters together
 Metadata:
@@ -20,11 +20,6 @@ Metadata:
           - privateSubnetOneCIDR
           - publicSubnetTwoCIDR
           - privateSubnetTwoCIDR
- #     -
-  #      Label:
-   #       default: "KEY PAIR"
-    #    Parameters:
-     #     - myKeyPair
 
 Parameters:
   VPCCIDR:
@@ -51,7 +46,6 @@ Parameters:
     Description: Private subnet CIDR.
     Type: String
     Default: 10.0.3.0/24
-  
 
 #----------------------------------------------------
 Resources:
@@ -59,8 +53,7 @@ Resources:
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock:
-        Ref: VPCCIDR
+      CidrBlock: !Ref VPCCIDR
       EnableDnsSupport: true
       Tags:
         - Key: Name
@@ -70,10 +63,8 @@ Resources:
   myPublicSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: myVPC
-      CidrBlock: 
-        Ref: publicSubnetOneCIDR
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref publicSubnetOneCIDR
       AvailabilityZone: !Select [0, !GetAZs '' ]
       Tags:
         - Key: Name
@@ -82,10 +73,8 @@ Resources:
   myPrivateSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: myVPC
-      CidrBlock: 
-        Ref: privateSubnetOneCIDR
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref privateSubnetOneCIDR
       AvailabilityZone: !Select [0, !GetAZs '' ]
       Tags:
         - Key: Name
@@ -94,10 +83,8 @@ Resources:
   myPublicSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: myVPC
-      CidrBlock: 
-        Ref: publicSubnetTwoCIDR
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref publicSubnetTwoCIDR
       AvailabilityZone: !Select [1, !GetAZs '' ]
       Tags:
         - Key: Name
@@ -106,10 +93,8 @@ Resources:
   myPrivateSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: myVPC
-      CidrBlock: 
-        Ref: privateSubnetTwoCIDR
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref privateSubnetTwoCIDR
       AvailabilityZone: !Select [1, !GetAZs '' ]
       Tags:
       - Key: Name
@@ -123,40 +108,34 @@ Resources:
       - Key: Name
         Value: MyInternetGateway
 
-  AttachMyInternetGateway:
+  attachMyInternetGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId:
-        Ref: myVPC
-      InternetGatewayId:
-        Ref: myInternetGateway
+      VpcId: !Ref myVPC
+      InternetGatewayId: !Ref myInternetGateway
+
 #----------------------------------------------------
 #ROUTETABLE
   myRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId:  
-        Ref: myVPC
+      VpcId: !Ref myVPC
+
 
 #PUBLICROUTETABLE
   myPublicRoute:
     Type: AWS::EC2::Route
-    DependsOn: AttachMyInternetGateway
+    DependsOn: attachMyInternetGateway
     Properties:
-       RouteTableId:
-        Ref: myRouteTable
-       DestinationCidrBlock: 0.0.0.0/0
-       GatewayId:
-        Ref: myInternetGateway
+      RouteTableId: !Ref myRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
 
   myPublicSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: myPublicSubnetOne
-      RouteTableId:
-        Ref: myRouteTable
-#----------------------------------------------------
+      SubnetId: !Ref myPublicSubnetOne
+      RouteTableId: !Ref myRouteTable
 
 #----------------------------------------------------
 #NatGateway
@@ -165,13 +144,12 @@ Resources:
     Properties:
         AllocationId: !GetAtt NATGatewayEIP.AllocationId
         SubnetId: !Ref myPublicSubnetOne
-        Tags:
-        - Key: stack
-          Value: production
+
   NATGatewayEIP:
     Type: AWS::EC2::EIP
     Properties:
         Domain: myVPC
+
   RouteNATGateway:
     DependsOn: NATGateway
     Type: AWS::EC2::Route
@@ -184,76 +162,24 @@ Resources:
   myPrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId:  
-        Ref: myVPC
+      VpcId: !Ref myVPC
 
   myPrivateSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: myPrivateSubnetOne
-      RouteTableId:
-        Ref: myPrivateRouteTable
+      SubnetId: !Ref myPrivateSubnetOne
+      RouteTableId: !Ref myPrivateRouteTable
 
   myPrivateSubnetTwoRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: myPrivateSubnetTwo
-      RouteTableId:
-        Ref: myPrivateRouteTable  
+      SubnetId: !Ref myPrivateSubnetTwo
+      RouteTableId: !Ref myPrivateRouteTable 
 #----------------------------------------------------
-#INSTANCE
-
-
- # myEIP:
- #   Type: AWS::EC2::EIP  # Allocate an Elastic IP address
- #   Properties:
-  #    InstanceId: 
-   #     Ref: myEC2Instance
-#----------------------------------------------------
-#SECURITYGROUP
-#  mySecurityGroup:
-#    Type: AWS::EC2::SecurityGroup
-#    Properties:
-#      GroupDescription: SG to test ping
-#      VpcId: 
-#        Ref: myVPC
-#      SecurityGroupIngress:
-#        - IpProtocol: tcp
-#          FromPort: 22
-#          ToPort: 22
-#          CidrIp: 0.0.0.0/0
-
-#----------------------------------------------------
- 
-
-#  myPrivateSecurityGroup:
-#    Type: AWS::EC2::SecurityGroup
-#    Properties:
-#      GroupDescription: SG to test ping
-#      VpcId: 
-#        Ref: myVPC
-#      SecurityGroupIngress:
-#        - IpProtocol: tcp
-#          FromPort: 22
-#          ToPort: 22
-#          CidrIp: !Ref publicSubnetOneCIDR
-
-#DBSecurity Group
-#  databaseSecurityGroup:
-#    Type: AWS::EC2::SecurityGroup
-#    Properties:
-#      GroupDescription: Open database for access
-#      SecurityGroupIngress:
-#        - IpProtocol: tcp
-#          FromPort: 3306
-#          ToPort: 3306
-#          SourceSecurityGroupId: !Ref mySecurityGroup
-#      VpcId: !Ref myVPC
-
 
 Outputs:
+
+
   myVPC:
     Description: VPC ID
     Value: !Ref myVPC
@@ -284,11 +210,13 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}-myPrivateSubnetTwo"
 
-#  databaseSecurityGroup:
-#    Description: database Security GroupID
-#    Value: !Ref databaseSecurityGroup
-#    Export:
-#      Name: !Sub "${AWS::StackName}-databaseSecurityGroup"
+  StackName:
+    Description: Name of the Stack
+    Value: !Sub "${AWS::StackName}"
+    Export: 
+      Name: !Sub "${AWS::StackName}"
+
+
 
   
   
