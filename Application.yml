@@ -1,26 +1,28 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
+Description: Application where All the Instances are launched.
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       -
         Label:
-          default: "Export VPC Stack Name"
+          default: "Enter VPC Stack Name:"
         Parameters:
           - ExportVPCStackName
       -
         Label:
-          default: "Export Security Stack Name"
+          default: "Enter Security Stack Name:"
         Parameters:
           - ExportSecurityStackName
       -
         Label:
-         default: "KEY PAIR"
+         default: "Enter Key pair:"
         Parameters:
           - myKeyPair
       -
         Label:
-          Default: "Environment Type"
+          Default: "Enter Environment Type:"
         Parameters:
           - EnvironmentType
 
@@ -66,7 +68,7 @@ Mappings:
       prod: ami-0be9df32ae9f92309
 
 Resources:
-  myEC2PrivateInstance:
+  myEC2Application:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", !Ref EnvironmentType]
@@ -74,14 +76,11 @@ Resources:
       KeyName: 
         Ref: myKeyPair
       SubnetId:
-        Fn::ImportValue: 
-          !Sub ${ExportVPCStackName}-myPrivateSubnetOne
-      #  Ref: myPrivateSubnetOne
+        Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetOne
       SecurityGroupIds:
         - Fn::ImportValue: !Sub ${ExportSecurityStackName}-myPrivateSecurityGroup
-        #- Ref: myPrivateSecurityGroup
 
-  myEC2Instance:
+  myEC2JumpServer:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", !Ref EnvironmentType]
@@ -89,15 +88,19 @@ Resources:
       KeyName:
         Ref: myKeyPair
       SubnetId:
-        Fn::ImportValue: 
-          !Sub ${ExportVPCStackName}-myPublicSubnetOne
-        #Ref: myPublicSubnetOne
+        Fn::ImportValue: !Sub ${ExportVPCStackName}-myPublicSubnetOne
       SecurityGroupIds:
         - Fn::ImportValue: !Sub ${ExportSecurityStackName}-mySecurityGroup
-       # - Ref: mySecurityGroup
 
   myEIP:
-    Type: AWS::EC2::EIP  # Allocate an Elastic IP address
+    Type: AWS::EC2::EIP
     Properties:
       InstanceId: 
-        Ref: myEC2Instance
+        Ref: myEC2JumpServer
+
+Outputs:
+  StackName:
+    Description: Add the VPC name here
+    Value: !Ref ExportVPCStackName
+    Export:
+      Name: !Sub "${AWS::StackName}" 
