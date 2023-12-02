@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-#Update Later
+
 Description: The CloudFormation mini Network Lab
 #----------------------------------------------------
 #Group the parameters together
@@ -30,22 +30,27 @@ Parameters:
   publicSubnetOneCIDR:
     Description: Public subnet CIDR.
     Type: String
-    Default: 10.0.0.0/24
+    Default: 10.0.0.0/28
 
   privateSubnetOneCIDR:
     Description: Private subnet CIDR.
     Type: String
-    Default: 10.0.1.0/24
+    Default: 10.0.1.0/28
 
   publicSubnetTwoCIDR:
     Description: Public subnet CIDR.
     Type: String
-    Default: 10.0.2.0/24
+    Default: 10.0.2.0/28
 
   privateSubnetTwoCIDR:
     Description: Private subnet CIDR.
     Type: String
-    Default: 10.0.3.0/24
+    Default: 10.0.3.0/28
+
+  myRDBSubnetCIDR:
+    Description: Private subnet CIDR.
+    Type: String
+    Default: 10.0.4.0/28
 
 #----------------------------------------------------
 Resources:
@@ -80,25 +85,37 @@ Resources:
         - Key: Name
           Value: myPrivateSubnetOne
 
-  myPublicSubnetTwo:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref myVPC
-      CidrBlock: !Ref publicSubnetTwoCIDR
-      AvailabilityZone: !Select [1, !GetAZs '' ]
-      Tags:
-        - Key: Name
-          Value: myPublicSubnetTwo
-
   myPrivateSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref myVPC
       CidrBlock: !Ref privateSubnetTwoCIDR
-      AvailabilityZone: !Select [1, !GetAZs '' ]
+      AvailabilityZone: !Select [0, !GetAZs '' ]
       Tags:
       - Key: Name
         Value: myPrivateSubnetTwo
+
+  myPrivateSubnetThree:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref publicSubnetTwoCIDR
+      AvailabilityZone: !Select [0, !GetAZs '' ]
+      Tags:
+        - Key: Name
+          Value: myPrivateSubnetThree
+
+#Subnet for RDB as Two AZ are need to use an RDB, this will be 
+#An empty AZ used for the RDB
+  myRDBSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: !Ref myRDBSubnetCIDR
+      AvailabilityZone: !Select [1, !GetAZs '' ]
+      Tags:
+        - Key: Name
+          Value: myRDBSubnet
 #----------------------------------------------------
 #INTERNETGATEWAY
   myInternetGateway:
@@ -120,7 +137,6 @@ Resources:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref myVPC
-
 
 #PUBLICROUTETABLE
   myPublicRoute:
@@ -175,10 +191,15 @@ Resources:
     Properties:
       SubnetId: !Ref myPrivateSubnetTwo
       RouteTableId: !Ref myPrivateRouteTable 
+
+  myPrivateSubnetThreeRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref myPrivateSubnetThree
+      RouteTableId: !Ref myPrivateRouteTable 
 #----------------------------------------------------
 
 Outputs:
-
 
   myVPC:
     Description: VPC ID
@@ -191,12 +212,6 @@ Outputs:
     Value: !Ref myPublicSubnetOne
     Export:
       Name: !Sub "${AWS::StackName}-myPublicSubnetOne"
-
-  myPublicSubnetTwo:
-    Description: Private Subnet Two ID
-    Value: !Ref myPublicSubnetTwo
-    Export:
-      Name: !Sub "${AWS::StackName}-myPublicSubnetTwo"
     
   myPrivateSubnetOne:
     Description: Private Subnet Two ID
@@ -209,6 +224,18 @@ Outputs:
     Value: !Ref myPrivateSubnetTwo
     Export:
       Name: !Sub "${AWS::StackName}-myPrivateSubnetTwo"
+
+  myPrivateSubnetThree:
+    Description: Private Subnet Two ID
+    Value: !Ref myPrivateSubnetThree
+    Export:
+      Name: !Sub "${AWS::StackName}-myPrivateSubnetThree"
+
+  myRDBSubnet:
+    Description: Subnet in a different AZ as need to use RDB.
+    Value: !Ref myRDBSubnet
+    Export:
+      Name: !Sub "${AWS::StackName}-myRDBSubnet"
 
   StackName:
     Description: Name of the Stack
