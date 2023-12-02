@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
+Description: Security Groups for the resources.
 
 Parameters:
   ExportVPCStackName:
@@ -17,10 +18,22 @@ Resources:
           !Sub ${ExportVPCStackName}-myVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: Jump Server SG
 
+#PrivateSecurityGroup
   myPrivateSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -32,8 +45,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 10.0.0.0/24
-        #  CidrIp: !Ref publicSubnetOneCIDR
+          SourceSecurityGroupId: !Ref mySecurityGroup
 
 #DBSecurity Group
   databaseSecurityGroup:
