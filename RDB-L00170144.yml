@@ -1,5 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
+Description: Resources for the Database.
+
 Parameters:
   ExportSecurityStackName:
     Description: Add the Security name here
@@ -80,7 +82,7 @@ Resources:
       DBSubnetGroupDescription: Subnets available for the RDS DB Instance
       SubnetIds: 
        - Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetTwo
-       - Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetOne
+       - Fn::ImportValue: !Sub ${ExportVPCStackName}-myRDBSubnet
       
   MyDB:
     Type: AWS::RDS::DBInstance
@@ -98,3 +100,17 @@ Resources:
       MultiAZ: !Ref MultiAZDatabase
       VPCSecurityGroups: 
        - Fn::ImportValue: !Sub ${ExportSecurityStackName}-databaseSecurityGroup
+
+Outputs:
+
+  MyDBSubnetGroup:
+    Description: DB Subnet Group
+    Value: !Ref MyDBSubnetGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-MyDBSubnetGroup"
+
+  MyDB:
+    Description: DB Instance
+    Value: !Ref MyDB
+    Export:
+      Name: !Sub "${AWS::StackName}-MyDB"
