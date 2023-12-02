@@ -68,18 +68,6 @@ Mappings:
       prod: ami-0be9df32ae9f92309
 
 Resources:
-  myEC2Application:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", !Ref EnvironmentType]
-      InstanceType: t2.micro
-      KeyName: 
-        Ref: myKeyPair
-      SubnetId:
-        Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetOne
-      SecurityGroupIds:
-        - Fn::ImportValue: !Sub ${ExportSecurityStackName}-myPrivateSecurityGroup
-
   myEC2JumpServer:
     Type: AWS::EC2::Instance
     Properties:
@@ -92,15 +80,32 @@ Resources:
       SecurityGroupIds:
         - Fn::ImportValue: !Sub ${ExportSecurityStackName}-mySecurityGroup
 
+  myEC2Application:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", !Ref EnvironmentType]
+      InstanceType: t2.micro
+      KeyName: 
+        Ref: myKeyPair
+      SubnetId:
+        Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetOne
+      SecurityGroupIds:
+        - Fn::ImportValue: !Sub ${ExportSecurityStackName}-myPrivateSecurityGroup
+
+  myEC2ApplicationTWO:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", !Ref EnvironmentType]
+      InstanceType: t2.micro
+      KeyName: 
+        Ref: myKeyPair
+      SubnetId:
+        Fn::ImportValue: !Sub ${ExportVPCStackName}-myPrivateSubnetThree
+      SecurityGroupIds:
+        - Fn::ImportValue: !Sub ${ExportSecurityStackName}-myPrivateSecurityGroup
+
   myEIP:
     Type: AWS::EC2::EIP
     Properties:
       InstanceId: 
         Ref: myEC2JumpServer
-
-Outputs:
-  StackName:
-    Description: Add the VPC name here
-    Value: !Ref ExportVPCStackName
-    Export:
-      Name: !Sub "${AWS::StackName}" 
